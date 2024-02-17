@@ -1,0 +1,32 @@
+*{
+    font-family: 'Jost', sans-serif;
+}
+
+body {
+    padding: 0%;
+}
+
+.custom-listing {
+    margin-bottom: 10px;
+    background-color: #33b5e5;
+    border: 2px solid #fff ;
+    color: #fff;
+}
+
+
+nav {
+    box-shadow: 0 0.125rem 0.675rem rgb(0 0 0 / 12%);
+    margin: 10px;
+}
+
+.card-img-top {
+    width: 100%;
+    height: 30vh;
+    object-fit: cover;
+}
+
+.card-img {
+    height: 200px;
+    width: 300px;
+    object-fit: cover;
+}

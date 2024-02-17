@@ -1,0 +1,113 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+
+{% block body %}
+
+<div class="container">
+
+    <h2 style="text-align: center;" id="name"></h2><hr>
+
+    {# LISTING DATA #}
+    <div class="card mb-3" style="flex-direction: row;">
+      <img class="card-img-top card-img" id="img" src="" alt="">
+        <div class="card-body">
+          <ul>
+            <li class="card-text">Description: <span id="description"></span></li>
+            <li class="card-text">Category: <span id="category"></span></li>
+            <li class="card-text">Price: <span id="price"></span>$</li>
+            <li class="card-text">Status: <span id="status"></span></li>
+            <li class="card-text">Seller: <span id="seller"></span></li>
+            <li class="card-text">Watchlist: <span id="watchlist"></span></li>
+            
+            <button id="watchlist-btn" class="btn btn-success add">Add to watchlists</button>
+            {% comment %} <button id="request-btn" class="btn btn-success add">Add to Requests</button> {% endcomment %}
+            <button id="request-btn" class="btn btn-success add" data-bs-toggle="modal" data-bs-target="#makeRequest">Request</button>
+          </ul>
+        </div>
+    </div>
+
+    {# COMMENTS #}
+    <div class="card">
+      <div class="card-header">
+        Comments
+      </div>
+      <div class="card-body">
+        <blockquote class="blockquote mb-0" id="comments">
+      
+        </blockquote>
+      </div>
+    </div>
+
+    {% if request.user.is_authenticated and listing.is_active %}
+      <form action="{% url 'comment' listing.id %}" method="POST" style="margin-top: 30px;">
+          {% csrf_token %}
+          <h5 class="card-title">Leave a comment:</h5>
+          <div class="card border-0 w-25" style="">
+              <div class="d-flex flex-start ">
+                  <div class="form-outline w-100">
+                      <textarea class="form-control" type="text" name="text" id="text" rows="4" style="background: #fff;" required pattern="\S(.*\S)?"></textarea>
+                      <button type="submit" class="btn btn-success" style="margin-top: 15px;">Add Comment</button>
+                  </div>
+              </div>
+          </div>
+      </form>
+    {% endif %}
+
+</div>
+
+<div class="modal fade" id="makeRequest" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Make Request</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+
+          <form action="#" method="POST" autocomplete="off" id="request-form">
+              <div class="modal-body">
+                  <div class="form-group">
+                    <textarea type="text" rows="4" minlength="5" class="form-control" name="text" id="request-text" placeholder="// Hi there! &#128521" required></textarea>
+                  </div>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  <button type="submit" class="btn btn-primary">Request</button>
+              </div>
+          </form>
+          
+          
+      </div>
+  </div>
+</div>
+
+<div class="modal fade" id="deleteRequest" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel1">Delete Request</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+          <form action="#" method="POST" autocomplete="off" id="delete-form">
+            <div class="modal-body">
+                <div class="form-group">
+                  <p>Your last request was this:</p>  
+                  <p id="requested-text"></p>  
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Delete</button>
+            </div>
+          </form>
+          
+      </div>
+  </div>
+</div>
+
+
+<script type="module" src="{% static 'auctions/javascript/listing.js' %}"></script>
+<script type="module" src="{% static 'auctions/javascript/request.js' %}"></script>
+
+{% endblock %}
