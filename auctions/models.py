@@ -1,5 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.utils import timezone
 
 class User(AbstractUser):
     pass
@@ -25,6 +28,7 @@ class Listing(models.Model):
     is_active = models.BooleanField(default=True)
     watchlist = models.ManyToManyField(User, blank=True, related_name="watchlist")
     sold = models.TextField(max_length=50, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.name}"
@@ -44,3 +48,52 @@ class Request(models.Model):
 
     def __str__(self):
         return f"{self.user}: request in {self.listing}"
+
+class Notification(models.Model):
+    STATUS_CHOICES = (
+        ('Normal', 'Normal'),
+        ('Success', 'Success'),
+        ('Danger', 'Danger'),
+    )
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notifications")
+    message = models.CharField(max_length=200)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Normal')
+    reference_number = models.IntegerField(null=True, blank=True)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        created_at_formatted = self.created_at.astimezone(timezone.get_current_timezone()).strftime("%d-%m-%Y %H:%M")
+        return f"{self.user} '{created_at_formatted}' : {self.message}"
+
+@receiver(post_save, sender=Listing)
+def create_notification(sender, instance, created, **kwargs):
+    if not created and not instance.is_active:
+        if instance.winner:
+            message = f"Your request for listing '{instance.name}' has been accepted."           
+            Notification.objects.create(
+                user=instance.winner, 
+                message=message, 
+                reference_number=instance.id, 
+                status='Success'
+            )
+            other_requests = Request.objects.filter(listing=instance).exclude(user=instance.winner)
+            for request in other_requests:
+                message = f"Your request for listing '{instance.name}' has not been accepted."
+                Notification.objects.create(
+                    user=request.user,
+                    message=message,
+                    reference_number=instance.id,
+                    status='Danger'
+                )
+        else:
+            requests = Request.objects.filter(listing=instance)
+            for request in requests:
+                message = f"Your request for listing '{instance.name}' has not been accepted."
+                Notification.objects.create(
+                    user=request.user,
+                    message=message,
+                    reference_number=instance.id,
+                    status='Danger'
+                )

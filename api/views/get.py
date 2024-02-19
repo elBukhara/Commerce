@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from auctions.models import *
-from ..serializers import ListingSerializer, UserSerializer
+from ..serializers import ListingSerializer, UserSerializer, NotificationSerializer
 
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -48,12 +48,21 @@ def getUserStatus(request):
 
 @api_view(['GET'])
 def getUser(request):
-
-    response = {'is_active': "false"}
-
+    
     try:
         user = User.objects.get(id=request.user.id)
-        serializer = UserSerializer(user, many=False)
-        return Response(serializer.data)
+        user = UserSerializer(user, many=False).data
+        return Response(user)
     except:
-        return Response(response)
+        return Response({'is_active': "false"})
+    
+
+@api_view(['GET'])
+def getNotifications(request):
+    try:
+        user = request.user
+        notification = Notification.objects.filter(user=user)
+        notification = NotificationSerializer(notification, many=True).data
+        return Response(notification)
+    except:
+        return Response({'status': 'none'})

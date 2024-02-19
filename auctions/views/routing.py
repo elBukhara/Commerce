@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.http import Http404
+from django.contrib.auth.decorators import login_required
 
 from ..models import *
 from .index import *
@@ -26,7 +27,7 @@ def listing(request, listing_id):
     except Http404:
         return render(request, "auctions/error/404.html")
 
-
+@login_required
 def profile(request):
     user = request.user
     requests = user.requests.all().count()
@@ -56,6 +57,7 @@ def category(request, category_id):
         "name": chosenCategory
     })
 
+@login_required
 def allwatchlist(request):
     currentuser = request.user
     listings = currentuser.watchlist.all() #gets all watchlist from the user

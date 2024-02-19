@@ -12,4 +12,5 @@ urlpatterns = [
     path("close/<int:pk>/<str:reason>/<int:winner>", views.closeListing),
     path('make-request', RequestCreateView.as_view(), name='request-create'),
     path('delete-request/<int:request_id>', RequestCreateView.as_view()),
+    path('notifications', views.getNotifications)
 ]

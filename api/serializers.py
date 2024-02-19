@@ -1,11 +1,14 @@
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
-from auctions.models import Listing, User, Comment, Request
+from auctions.models import Listing, User, Comment, Request, Notification
+from rest_framework import serializers
 
 class ListingSerializer(ModelSerializer):
     seller_username = SerializerMethodField()
     requests = SerializerMethodField()
     comments = SerializerMethodField()
     category = SerializerMethodField()
+    winner = SerializerMethodField()
+    created_at = serializers.DateTimeField(format="%d.%m.%Y %H:%M")
 
     def get_seller_username(self, obj):
         return obj.seller.username
@@ -22,6 +25,10 @@ class ListingSerializer(ModelSerializer):
 
     def get_category(self, obj):
         return obj.category.name
+    
+    def get_winner(self, obj):
+        if obj.winner:
+            return [obj.winner.id, obj.winner.username]
 
     def to_representation(self, obj):
         data = super().to_representation(obj)
@@ -49,7 +56,7 @@ class ListingSerializer(ModelSerializer):
     class Meta:
         model = Listing
         fields = ['is_active', 'category', 'description', 'id', 'image', 'name', 'price', 
-                  'requests', 'seller_username', 'sold', 'watchlist', 'winner', 'comments']
+                  'requests', 'seller_username', 'sold', 'watchlist', 'winner', 'comments', 'created_at']
         
 
 class CommentSerializer(ModelSerializer):
@@ -65,4 +72,11 @@ class RequestSerializer(ModelSerializer):
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
+        fields = '__all__'
+
+class NotificationSerializer(ModelSerializer):
+    created_at = serializers.DateTimeField(format="%d.%m.%Y %H:%M")
+
+    class Meta:
+        model = Notification
         fields = '__all__'

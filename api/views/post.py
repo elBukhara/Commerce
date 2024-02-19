@@ -53,7 +53,7 @@ class RequestCreateView(APIView):
 @api_view(['GET'])
 def closeListing(request, pk, reason, winner):
     listing = Listing.objects.get(id = pk)
-    listing.ISactive = False
+    listing.is_active = False
 
     if reason == "otherPlace":
         listing.sold = "In other place"
