@@ -30,3 +30,19 @@ nav {
     width: 300px;
     object-fit: cover;
 }
+
+#notification-dropdown {
+    top: 100%;
+    right: 0%;
+    left: inherit;
+}
+
+#notification-dropdown li {
+    word-wrap: break-word;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.unread {
+    background-color: #f1f1f1;
+}

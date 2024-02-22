@@ -115,3 +115,28 @@ export function deleteRequest(requestId, csrftoken) {
         console.error('An error occurred:', error);
       });
 }
+
+export async function getNotification() {
+  const response = await fetch(
+    "http://127.0.0.1:8000/api/notifications"
+  );
+
+  const notifications = await response.json();
+
+  return notifications;
+}
+
+export async function markNotificationAsRead(notificationId, csrftoken) {
+  const response = await fetch(
+    `http://127.0.0.1:8000/api/notifications/${notificationId}/read`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken 
+      },
+  });
+
+  const message = await response.status;
+
+  return message;
+}

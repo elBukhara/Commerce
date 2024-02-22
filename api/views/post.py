@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from auctions.models import Listing, User, Request
 from rest_framework.generics import get_object_or_404
 from ..serializers import RequestSerializer
+from auctions.models import Notification
 
 @api_view(['GET'])
 def postWatchlist(request, pk):
@@ -68,3 +69,16 @@ def closeListing(request, pk, reason, winner):
     message = f"listing was closed, reason: {reason}"
     
     return Response({'message': message})
+
+
+@api_view(['PUT'])
+def mark_notification_as_read(request, pk):
+    try:
+        notification = Notification.objects.get(pk=pk)
+    except Notification.DoesNotExist:
+        return Response(status=404)
+
+    notification.is_read = True
+    notification.save()
+
+    return Response(status=200)

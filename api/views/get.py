@@ -61,8 +61,13 @@ def getUser(request):
 def getNotifications(request):
     try:
         user = request.user
-        notification = Notification.objects.filter(user=user)
-        notification = NotificationSerializer(notification, many=True).data
-        return Response(notification)
+        notifications = Notification.objects.filter(user=user).order_by("-id")
+        unread_messages = notifications.filter(is_read=False).count()
+        notification_data = NotificationSerializer(notifications, many=True).data
+        response_data = {
+            'unread_messages': unread_messages,
+            'notifications': notification_data
+        }
+        return Response(response_data)
     except:
         return Response({'status': 'none'})

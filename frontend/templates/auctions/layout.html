@@ -58,7 +58,23 @@
             
             
         </ul>
+
         <ul class="navbar-nav d-flex justify-content-end">
+            
+            <li class="nav-item dropdown-center notification-section">
+                <a href="#" class="nav-link position-relative" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="true">
+                    <i class="bi bi-bell"></i>
+                    <span id="notification-badge" style="display: none" class="position-absolute top-50 end-50 translate-middle badge rounded-pill bg-secondary">
+                        
+                    </span>
+                </a>
+                {% if user.is_authenticated %}
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown" id="notification-dropdown"
+                    data-popper-placement="auto">
+                    
+                </ul>
+                {% endif %}            
+            </li>
 
             {% if user.is_authenticated %}
             <li class="nav-item dropdown">
@@ -82,8 +98,7 @@
                 <li><a class="dropdown-item" href="#">Something else here</a></li>
                 </ul>
             </li>
-            {% endif %}
-
+            {% endif %}            
         </ul>
 
     </div>
@@ -111,6 +126,8 @@
       </ul>
     </footer>
 </div>
+
+<script type="module" src="{% static 'auctions/javascript/notifications.js' %}"></script>
 
 </body>
 </html>
